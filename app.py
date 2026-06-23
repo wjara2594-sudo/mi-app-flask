@@ -5,9 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
-# Usa una clave fuerte y cámbiala
-app.config['SECRET_KEY'] = 'clave_secreta_super_segura' 
-# La base de datos se guardará en la misma carpeta
+app.config['SECRET_KEY'] = 'clave_secreta_super_segura'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usuarios.db'
 
 db = SQLAlchemy(app)
@@ -22,6 +20,11 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# Ruta principal redirige al login
+@app.route('/')
+def index():
+    return redirect(url_for('login'))
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -31,8 +34,9 @@ def login():
             return "¡Login Exitoso!"
     return render_template('login.html')
 
-# Esto es lo que busca Azure para iniciar la app
+# Crear tablas al iniciar con gunicorn
+with app.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run()
