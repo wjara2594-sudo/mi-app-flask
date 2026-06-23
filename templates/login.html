@@ -2,15 +2,44 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Seguritisystem - Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='Dise.css') }}">
 </head>
 <body>
-<form method="POST" action="/login">
-    <h2>Iniciar Sesión</h2>
-    <input type="text" name="username" placeholder="Usuario" required>
-    <input type="password" name="password" placeholder="Contraseña" required>
-    <button type="submit">Entrar</button>
-</form>
+
+<div class="top-bar">
+    <div class="top-bar-icon">🔒</div>
+    <div>
+        <h1>Ingeniería en Telemática</h1>
+        <h2>Seguritisystem</h2>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="login-card">
+        <div class="card-header">
+            <div class="card-icon">👤</div>
+            <h3>Iniciar Sesión</h3>
+            <p>Acceso al sistema de seguridad</p>
+        </div>
+        <form method="POST" action="/login">
+            <label class="field-label">Usuario</label>
+            <div class="field-wrap">
+                <input type="text" name="username" placeholder="Ingresa tu usuario" required>
+            </div>
+            <label class="field-label">Contraseña</label>
+            <div class="field-wrap">
+                <input type="password" name="password" placeholder="Ingresa tu contraseña" required>
+            </div>
+            <button type="submit" class="btn-login">Entrar</button>
+        </form>
+    </div>
+</div>
+
+<div class="bottom-bar">
+    <span>Mauricio Estrada Blando</span>
+    <span>Walter Javier Jara López</span>
+</div>
+
 </body>
 </html>
