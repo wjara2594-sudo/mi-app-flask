@@ -8,31 +8,81 @@
 <body>
 
 <div class="top-bar">
-    <div class="top-bar-icon">🔒</div>
-    <div>
-        <h1>Ingeniería en Telemática</h1>
-        <h2>Seguritisystem</h2>
+    <div class="top-left">
+        <div>
+            <h1>Ingeniería en Telemática</h1>
+            <h2>Seguritisystem</h2>
+        </div>
+    </div>
+    <div class="top-logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Seguritisystem">
     </div>
 </div>
 
 <div class="main-content">
-    <div class="login-card">
-        <div class="card-header">
-            <div class="card-icon">👤</div>
-            <h3>Iniciar Sesión</h3>
-            <p>Acceso al sistema de seguridad</p>
+    <div class="watermark">
+        <img src="{{ url_for('static', filename='Imag01.jpg') }}" alt="">
+    </div>
+
+    <div class="card-wrap">
+        <div class="login-card" id="loginCard">
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <h3>Iniciar Sesión</h3>
+                <p>Acceso al sistema de seguridad</p>
+            </div>
+
+            <form method="POST" action="/login">
+                <label class="field-label">Usuario</label>
+                <div class="field-wrap">
+                    <input type="text" name="username" placeholder="Ingresa tu usuario" required>
+                </div>
+
+                <label class="field-label">Contraseña</label>
+                <div class="field-wrap">
+                    <input type="password" name="password" placeholder="Ingresa tu contraseña" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Entrar</button>
+            </form>
+
+            <hr class="divider">
+            <button class="btn-link" onclick="showReset()">🔑 Restablecer contraseña</button>
         </div>
-        <form method="POST" action="/login">
-            <label class="field-label">Usuario</label>
-            <div class="field-wrap">
-                <input type="text" name="username" placeholder="Ingresa tu usuario" required>
+
+        <div class="reset-card" id="resetCard">
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+                <h3>Restablecer contraseña</h3>
+                <p>Ingresa tus datos para continuar</p>
             </div>
-            <label class="field-label">Contraseña</label>
-            <div class="field-wrap">
-                <input type="password" name="password" placeholder="Ingresa tu contraseña" required>
-            </div>
-            <button type="submit" class="btn-login">Entrar</button>
-        </form>
+
+            <div class="success-msg" id="successMsg">✅ Solicitud enviada. Revisa tu correo electrónico.</div>
+
+            <form method="POST" action="/reset-password">
+                <label class="field-label">Nombre completo</label>
+                <div class="field-wrap">
+                    <input type="text" name="nombre" placeholder="Ej. Juan Pérez García" required>
+                </div>
+
+                <label class="field-label">Correo electrónico</label>
+                <div class="field-wrap">
+                    <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Enviar solicitud</button>
+            </form>
+
+            <button class="btn-back" onclick="showLogin()">← Volver al inicio de sesión</button>
+        </div>
     </div>
 </div>
 
@@ -40,6 +90,17 @@
     <span>Mauricio Estrada Blando</span>
     <span>Walter Javier Jara López</span>
 </div>
+
+<script>
+function showReset() {
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('resetCard').style.display = 'block';
+}
+function showLogin() {
+    document.getElementById('resetCard').style.display = 'none';
+    document.getElementById('loginCard').style.display = 'block';
+}
+</script>
 
 </body>
 </html>
