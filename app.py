@@ -20,7 +20,6 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Ruta principal redirige al login
 @app.route('/')
 def index():
     return redirect(url_for('login'))
@@ -32,9 +31,17 @@ def login():
         if user and check_password_hash(user.password, request.form['password']):
             login_user(user)
             return "¡Login Exitoso!"
+        flash('Usuario o contraseña incorrectos')
     return render_template('login.html')
 
-# Crear tablas al iniciar con gunicorn
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    nombre = request.form.get('nombre')
+    correo = request.form.get('correo')
+    # Aquí puedes agregar lógica para enviar correo en el futuro
+    flash('Solicitud enviada. Revisa tu correo electrónico.')
+    return redirect(url_for('login'))
+
 with app.app_context():
     db.create_all()
 
