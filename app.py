@@ -17,7 +17,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(150))
 
-# Nuevo modelo para registrar los accesos de los usuarios
+# Modelo para registrar los accesos de los usuarios (Historial de logins)
 class LoginLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False)
@@ -55,11 +55,21 @@ def reset_password():
     flash('Solicitud enviada. Revisa tu correo electrónico.')
     return redirect(url_for('login'))
 
-# Ruta opcional para visualizar los registros en pantalla
+# Ruta para visualizar/validar los usuarios registrados en el sistema
+@app.route('/usuarios')
+def ver_usuarios():
+    usuarios = User.query.all()
+    html = "<h1>Usuarios Registrados en el Sistema</h1><ul>"
+    for u in usuarios:
+        html += f"<li>ID: {u.id} - Usuario: <b>{u.username}</b></li>"
+    html += "</ul>"
+    return html
+
+# Ruta para visualizar los registros de inicio de sesión (Logs)
 @app.route('/logs')
 def ver_logs():
     registros = LoginLog.query.order_by(LoginLog.timestamp.desc()).all()
-    html = "<h1>Registro de Accesos al Sistema</h1><ul>"
+    html = "<h1>Registro de Accesos (Logins)</h1><ul>"
     for reg in registros:
         html += f"<li>Usuario: <b>{reg.username}</b> - Fecha y Hora (UTC): {reg.timestamp}</li>"
     html += "</ul>"
