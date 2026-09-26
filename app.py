@@ -7,7 +7,8 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'clave_secreta_super_segura'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usuarios.db'
+# Kuusaa daataa gara daandii alaa tii (Bind Mount) qajeelchuu
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////app/data/usuarios.db'
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -17,7 +18,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(150))
 
-# Modelo para registrar los accesos de los usuarios (Historial de logins)
+# Moodeela galmee seensaa (Login Logs) fayyadamtootaaf
 class LoginLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False)
@@ -38,12 +39,12 @@ def login():
         if user and check_password_hash(user.password, request.form['password']):
             login_user(user)
             
-            # Guardar el registro de inicio de sesión exitoso en la base de datos
+            # Galmee seensaa milkaa'ee kuusaa daataatti dabaluu
             nuevo_registro = LoginLog(username=user.username)
             db.session.add(nuevo_registro)
             db.session.commit()
             
-            return "¡Login Exitoso y registrado en la BD!"
+            return "¡Login Exitoso y registrado en la BD del Nodo!"
             
         flash('Usuario o contraseña incorrectos')
     return render_template('login.html')
@@ -55,7 +56,7 @@ def reset_password():
     flash('Solicitud enviada. Revisa tu correo electrónico.')
     return redirect(url_for('login'))
 
-# Ruta para visualizar/validar los usuarios registrados en el sistema
+# Daandii fayyadamtoota galmaa'an ilaaluuf
 @app.route('/usuarios')
 def ver_usuarios():
     usuarios = User.query.all()
@@ -65,7 +66,7 @@ def ver_usuarios():
     html += "</ul>"
     return html
 
-# Ruta para visualizar los registros de inicio de sesión (Logs)
+# Daandii galmee seensaa (Logs) ilaaluuf
 @app.route('/logs')
 def ver_logs():
     registros = LoginLog.query.order_by(LoginLog.timestamp.desc()).all()
