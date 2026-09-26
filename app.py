@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 import os
 
 app = Flask(__name__)
@@ -15,6 +16,12 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(150))
+
+# Nuevo modelo para registrar los accesos de los usuarios
+class LoginLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -30,7 +37,14 @@ def login():
         user = User.query.filter_by(username=request.form['username']).first()
         if user and check_password_hash(user.password, request.form['password']):
             login_user(user)
-            return "¡Login Exitoso!"
+            
+            # Guardar el registro de inicio de sesión exitoso en la base de datos
+            nuevo_registro = LoginLog(username=user.username)
+            db.session.add(nuevo_registro)
+            db.session.commit()
+            
+            return "¡Login Exitoso y registrado en la BD!"
+            
         flash('Usuario o contraseña incorrectos')
     return render_template('login.html')
 
@@ -38,9 +52,18 @@ def login():
 def reset_password():
     nombre = request.form.get('nombre')
     correo = request.form.get('correo')
-    # Aquí puedes agregar lógica para enviar correo en el futuro
     flash('Solicitud enviada. Revisa tu correo electrónico.')
     return redirect(url_for('login'))
+
+# Ruta opcional para visualizar los registros en pantalla
+@app.route('/logs')
+def ver_logs():
+    registros = LoginLog.query.order_by(LoginLog.timestamp.desc()).all()
+    html = "<h1>Registro de Accesos al Sistema</h1><ul>"
+    for reg in registros:
+        html += f"<li>Usuario: <b>{reg.username}</b> - Fecha y Hora (UTC): {reg.timestamp}</li>"
+    html += "</ul>"
+    return html
 
 if __name__ == '__main__':
     with app.app_context():
